@@ -47,5 +47,5 @@ const decrypt = async (data) => {
     const encrypted_data_from_file=fs.readFileSync('orig.mpg.encrypted', 'utf-8')
     const unencryptedFile= await decrypt({data:encrypted_data_from_file})
     // openpgp.message.
-    fs.writeFileSync("unecrypted.mpg", unencryptedFile.data)
+    fs.writeFileSync("unencrypted.mpg", unencryptedFile.data)
 })()
