@@ -11,5 +11,8 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "openpgp": "^4.10.7"
+  },
+  "devDependencies": {
+    "md5-file": "^5.0.0"
   }
 }

@@ -1,7 +1,7 @@
 const openpgp = require('openpgp')
 const publicKey = require('./public_key.json')
 const privateKey = require('./private_key.json')
-const unencrypteddata = "Hello World"
+
 const fs = require("fs")
 const encrypt = async (data) =>{
     
@@ -15,7 +15,7 @@ const encrypt = async (data) =>{
 }
 const decrypt = async (data) => {
     const privKeyObj = (await openpgp.key.readArmored(privateKey)).keys[0]
-    // console.log(data)
+    
     const options = {
         message: await openpgp.message.readArmored(data.data),
         publicKeys: (await openpgp.key.readArmored(publicKey)).keys,
