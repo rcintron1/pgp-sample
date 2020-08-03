@@ -4,3 +4,4 @@ private_key.json
 public_key.json
 orig.mpg.encrypted
 unencrypted.mpg
+.DS_Store
