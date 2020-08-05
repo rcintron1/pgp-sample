@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "createkeys": "node createKeys.js",
+    "encrypt":"node encryptFile.js",
+    "decrypt":"node decryptFile.js"
   },
   "author": "",
   "license": "ISC",

@@ -13,7 +13,7 @@ const getPGPkey = async () => {
 }
 
 const writeKey = (key)=>{
-    console.log("writing keys", key)
+    console.log("writing keys")
     fs.writeFileSync('private_key.json',JSON.stringify(key.private, null, 2)) 
     fs.writeFileSync('public_key.json',JSON.stringify(key.public, null, 2)) 
 }
