@@ -1,6 +1,6 @@
 const chaiExec = require("@jsdevtools/chai-exec").chaiExecSync;
+const md5File = require('md5-file')
 const chai = require("chai");
-
 const expect = chai.expect
 
 chai.use(chaiExec);
@@ -37,6 +37,14 @@ describe("Testing decrypting binary file", () => {
     });
 });
 
+describe("Testing File pre and post encryption", ()=>{
+    const origFile = md5File.sync('./orig.mpg')
+    const newFile = md5File.sync('./unencrypted.mpg')
+
+    it("Orignal file and file after process should have the same MD5 Sum", ()=>{
+        expect(origFile).to.be.a.equal(newFile);
+    })
+})
 function cleanup(){
     const fs = require('fs')
 

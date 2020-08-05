@@ -6,8 +6,8 @@
   "scripts": {
     "test": "mocha",
     "createkeys": "node createKeys.js",
-    "encrypt":"node encryptFile.js",
-    "decrypt":"node decryptFile.js"
+    "encrypt": "node encryptFile.js",
+    "decrypt": "node decryptFile.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +15,7 @@
     "@jsdevtools/chai-exec": "^2.1.1",
     "@jsdevtools/ez-spawn": "^3.0.4",
     "chai": "^4.2.0",
+    "chai-fs": "^2.0.0",
     "dotenv": "^8.2.0",
     "mocha": "^8.1.0",
     "openpgp": "^4.10.7"
