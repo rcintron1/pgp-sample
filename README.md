@@ -10,7 +10,7 @@ I hope this repo will assist in figuring out how to encrypt and decrypt a binary
 - Code to create keys without passphrase
 - Code to create keys with passphrase
 - Simple sample that encrypts and decrypts an mpg file
-- ~~A module you can import and use to easily encrypt and decrypt files (or text)~~
+- A module you can import and use to easily encrypt and decrypt files (or text)
 
 ## Instructions
 _Note that this repo is to serve as reference material and not actual code you would import._
