@@ -10,10 +10,12 @@ const createkeys = async ({name, email, passphrase}) => {
 
     return {public:publicKeyArmored, private:privateKeyArmored}
 }
-const encrypt = async (data) =>{
-    
+const encrypt = async (data, publicKey) =>{
+    // console.log(publicKey)
+    const message = openpgp.message.fromBinary(data)
+    // console.log((await openpgp.key.readArmored(publicKey)).keys)
     const options = {
-        message: data,
+        message: message,
         publicKeys: (await openpgp.key.readArmored(publicKey)).keys,
     }
 
@@ -21,11 +23,11 @@ const encrypt = async (data) =>{
     return response
 }
 
-const decrypt = async (data) => {
+const decrypt = async (data, privateKey) => {
     const privKeyObj = (await openpgp.key.readArmored(privateKey)).keys[0]
     
     const options = {
-        message: await openpgp.message.readArmored(data.data),
+        message: await openpgp.message.readArmored(data),
         privateKeys: [privKeyObj],
         format: 'binary'
     }

@@ -4,65 +4,66 @@ const fs = require('fs')
 const md5File = require('md5-file');
 const chai = require("chai");
 const chaiFiles = require('chai-files');
+const { async } = require("@jsdevtools/ez-spawn");
 const file = chaiFiles.file;
 const expect = chai.expect;
 
 chai.use(chaiExec);
 chai.use(chaiFiles);
 let myCLI;
+let pgpkeys;
 
-describe("Testing creation of keys", () => {
+describe("Testing the App", async () => {
+    const pgpkeys = await createkeys({
+        name:"Test User",
+        email:"someone@test.com"
+    });
+    describe("Testing creation of keys", async () => {
+        it("should create a public and private key", async ()=>{
+            expect(pgpkeys.public).to.contain("BEGIN PGP PUBLIC KEY BLOCK");
+            expect(pgpkeys.private).to.contain("BEGIN PGP PRIVATE KEY BLOCK");
+        });    
+    });
     
-    it("should create a public and private key", async ()=>{
-        const pgpkeys = await createkeys({
-            name:"Test User",
-            email:"someone@test.com"
-        });
-
+    const mpgFile = await fs.readFileSync('orig.mpg');
+    const fileForOpenpgpjs = new Uint8Array(mpgFile);
         
-        expect(pgpkeys.public).to.contain("BEGIN PGP PUBLIC KEY BLOCK");
-        expect(pgpkeys.private).to.contain("BEGIN PGP PRIVATE KEY BLOCK");
-        fs.writeFileSync('private_key.json',JSON.stringify(pgpkeys.private, null, 2)) 
-        fs.writeFileSync('public_key.json',JSON.stringify(pgpkeys.public, null, 2))
-        expect()
+    const data = await encrypt(fileForOpenpgpjs, pgpkeys.public );
+
+    describe ("Encrypting an mpg file", async () => {
+        // Convert file to a format readable to openpgp
+        fs.writeFileSync('orig.mpg.encrypted',data.data);
+        it("should write an encrypted file",()=>{
+            expect(file('orig.mpg.encrypted')).to.exist;
+        })
+        it("should be a pgp file",()=>{
+            expect(file('orig.mpg.encrypted')).to.contain("-----BEGIN PGP MESSAGE-----")
+        })
     });
 
-    it("should exit with a zero exit code", async(done) => {
-        myCLI = await chaiExec('npm run-script encrypt');    
-        expect(myCLI).to.exit.with.code(0);
-        done()
-    });
+    const encryptedDataFromFile=fs.readFileSync('orig.mpg.encrypted', 'utf-8')
+    const unencryptedFile= await decrypt(encryptedDataFromFile, pgpkeys.private)
+    
+    fs.writeFileSync("unencrypted.mpg", unencryptedFile.data)
 
-    it("should contain writing encrypted file to disk", (done)=>{
-        expect(myCLI).stdout.to.contain("Writing encrypted file to disk")
-        done()
-    });
-    myCLI = chaiExec('npm run-script decrypt');
-    it("should exit with a zero exit code", () => {
-        expect(myCLI).to.exit.with.code(0);
-    });
+    describe ("Decrypting mpg file", async () => {
+        it("should have written an unencryptred file", ()=>{
+            expect(file('unencrypted.mpg')).to.exist;
+        })
+        it("Files should match md5 hash", async () => {
+            const origFile = md5File.sync('./orig.mpg')
+            const newFile = md5File.sync('./unencrypted.mpg')
+            expect(origFile).to.be.a.equal(newFile)
+        })
+    })
+})
 
-    it("should contain File Decrypted", ()=>{
-        expect(myCLI).stdout.to.contain("File Decrypted");
-    });
-});
+after(async ()=>{
+    // cleanup();
+})
 
-
-
-// describe("Testing File pre and post encryption", ()=>{
-//     const origFile = md5File.sync('./orig.mpg');
-//     const newFile = md5File.sync('./unencrypted.mpg');
-
-//     it("Orignal file and file after process should have the same MD5 Sum", ()=>{
-//         expect(origFile).to.be.a.equal(newFile);
-//     })
-// })
 function cleanup(){
-    const fs = require('fs');
-
     const path = [
-        './public_key.json',
-        './private_key.json',
         './orig.mpg.encrypted',
         './unencrypted.mpg'
     ];
@@ -71,15 +72,10 @@ function cleanup(){
         path.forEach(file=>{
             fs.unlinkSync(file)
         });
-        // fs.unlinkSync(path)
-        //file removed
     } catch(err) {
-        console.error(err);
+        console.log(err);
     }
-
 }
 
-after(async ()=>{
-    cleanup();
-})
+
 
