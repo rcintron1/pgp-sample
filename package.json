@@ -20,6 +20,7 @@
     "openpgp": "^4.10.7"
   },
   "devDependencies": {
+    "chai-files": "^1.4.0",
     "md5-file": "^5.0.0"
   }
 }
