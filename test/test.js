@@ -35,32 +35,32 @@ describe("Testing the App", async () => {
         fs.writeFileSync('orig.mpg.encrypted',data.data);
         it("should write an encrypted file",()=>{
             expect(file('orig.mpg.encrypted')).to.exist;
-        })
+        });
         it("should be a pgp file",()=>{
             expect(file('orig.mpg.encrypted')).to.contain("-----BEGIN PGP MESSAGE-----")
-        })
+        });
     });
 
-    const encryptedDataFromFile=fs.readFileSync('orig.mpg.encrypted', 'utf-8')
-    const unencryptedFile= await decrypt(encryptedDataFromFile, pgpkeys.private)
+    const encryptedDataFromFile=fs.readFileSync('orig.mpg.encrypted', 'utf-8');
+    const unencryptedFile= await decrypt(encryptedDataFromFile, pgpkeys.private);
     
-    fs.writeFileSync("unencrypted.mpg", unencryptedFile.data)
+    fs.writeFileSync("unencrypted.mpg", unencryptedFile.data);
 
     describe ("Decrypting mpg file", async () => {
         it("should have written an unencryptred file", ()=>{
             expect(file('unencrypted.mpg')).to.exist;
-        })
+        });
         it("Files should match md5 hash", async () => {
-            const origFile = md5File.sync('./orig.mpg')
-            const newFile = md5File.sync('./unencrypted.mpg')
+            const origFile = md5File.sync('./orig.mpg');
+            const newFile = md5File.sync('./unencrypted.mpg');
             expect(origFile).to.be.a.equal(newFile)
-        })
-    })
-})
+        });
+    });
+});
 
 after(async ()=>{
-    // cleanup();
-})
+    cleanup();
+});
 
 function cleanup(){
     const path = [
@@ -70,7 +70,7 @@ function cleanup(){
 
     try {
         path.forEach(file=>{
-            fs.unlinkSync(file)
+            fs.unlinkSync(file);
         });
     } catch(err) {
         console.log(err);
