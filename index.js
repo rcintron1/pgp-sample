@@ -1,12 +1,13 @@
 const openpgp = require('openpgp');
 
 const createkeys = async ({name, email, passphrase}) => {
-
-    const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-        userIds: [{ name: process.env.NAME, email: process.env.EMAIL }], // you can pass multiple user IDs
+    const params = {
+        userIds: [{ name: name, email: email }], // you can pass multiple user IDs
         curve: 'ed25519',                                           // ECC curve name
-        // passphrase: 'super long and hard to guess secret'           // protects the private key
-    });
+        passphrase: passphrase           // protects the private key
+    }
+    
+    const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey(params);
 
     return {public:publicKeyArmored, private:privateKeyArmored}
 }
