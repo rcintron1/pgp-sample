@@ -15,7 +15,7 @@ I hope this repo will assist in figuring out how to encrypt and decrypt a binary
 ## Instructions
 _Note that this repo is to serve as reference material and not actual code you would import._
 
-You can run `npm run test` to verify that all is working as expected.
+You can run `npm test` to verify that all is working as expected.
 
 To create sample PGP keys, run `npm run-script createkeys`. This will actually run node createKeys.js. This will create two files on your folder: 
 - `private_key.json`
