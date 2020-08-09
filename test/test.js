@@ -10,15 +10,14 @@ const expect = chai.expect;
 
 chai.use(chaiExec);
 chai.use(chaiFiles);
-let myCLI;
-let pgpkeys;
 
-describe("Testing the App", async () => {
+
+describe('#Testing the App', async () => {
     const pgpkeys = await createkeys({
         name:"Test User",
         email:"someone@test.com"
     });
-    describe("Testing creation of keys", async () => {
+    context("Testing creation of keys", async () => {
         it("should create a public and private key", async ()=>{
             expect(pgpkeys.public).to.contain("BEGIN PGP PUBLIC KEY BLOCK");
             expect(pgpkeys.private).to.contain("BEGIN PGP PRIVATE KEY BLOCK");
@@ -30,7 +29,7 @@ describe("Testing the App", async () => {
         
     const data = await encrypt(fileForOpenpgpjs, pgpkeys.public );
 
-    describe ("Encrypting an mpg file", async () => {
+    context ("Encrypting an mpg file", async () => {
         // Convert file to a format readable to openpgp
         fs.writeFileSync('orig.mpg.encrypted',data.data);
         it("should write an encrypted file",()=>{
@@ -46,7 +45,7 @@ describe("Testing the App", async () => {
     
     fs.writeFileSync("unencrypted.mpg", unencryptedFile.data);
 
-    describe ("Decrypting mpg file", async () => {
+    context ("Decrypting mpg file", async () => {
         it("should have written an unencryptred file", ()=>{
             expect(file('unencrypted.mpg')).to.exist;
         });
@@ -56,11 +55,13 @@ describe("Testing the App", async () => {
             expect(origFile).to.be.a.equal(newFile)
         });
     });
+
+    after(async ()=>{
+        cleanup();
+    });
 });
 
-after(async ()=>{
-    cleanup();
-});
+
 
 function cleanup(){
     const path = [
