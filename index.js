@@ -24,16 +24,26 @@ const encrypt = async (data, publicKey) =>{
     return response
 }
 
-const decrypt = async (data, privateKey) => {
-    const privKeyObj = (await openpgp.key.readArmored(privateKey)).keys[0]
-    
+const decrypt = async (data, privateKey, passphrase) => {
+    const privKeyObj = (await openpgp.key.readArmored(privateKey).catch(()=> console.log)).keys[0]
+    let message
+    if (passphrase){
+        try {
+            privKeyObj.decrypt(passphrase).catch((e)=>{});
+        }catch(err){
+            throw err
+        }
+
+    }
+    message = await openpgp.message.readArmored(data).catch(()=> console.log)
     const options = {
-        message: await openpgp.message.readArmored(data),
+        message: message,
         privateKeys: [privKeyObj],
         format: 'binary'
     }
-
+    
     const response = await openpgp.decrypt(options)
+    
     return response
 }
 

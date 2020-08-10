@@ -11,11 +11,12 @@ const expect = chai.expect;
 chai.use(chaiExec);
 chai.use(chaiFiles);
 
-
+const passphrase = "This is it"
 describe('#Testing the App', async () => {
     const pgpkeys = await createkeys({
         name:"Test User",
-        email:"someone@test.com"
+        email:"someone@test.com",
+        passphrase: passphrase
     });
     context("Testing creation of keys", async () => {
         it("should create a public and private key", async ()=>{
@@ -41,7 +42,18 @@ describe('#Testing the App', async () => {
     });
 
     const encryptedDataFromFile=fs.readFileSync('orig.mpg.encrypted', 'utf-8');
-    const unencryptedFile= await decrypt(encryptedDataFromFile, pgpkeys.private);
+
+    context ("Testing wrong passphrase", ()=>{
+        it("Should throw an error",  async ()=>{
+            try {
+                await decrypt(encryptedDataFromFile, pgpkeys.private, "Wrong passphrase")
+            }catch(e){
+                expect(e.message).to.include("Private key is not decrypted.")
+            }
+        })
+    })
+    
+    const unencryptedFile= await decrypt(encryptedDataFromFile, pgpkeys.private, passphrase);
     
     fs.writeFileSync("unencrypted.mpg", unencryptedFile.data);
 
@@ -77,6 +89,3 @@ function cleanup(){
         console.log(err);
     }
 }
-
-
-
